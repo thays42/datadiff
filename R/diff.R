@@ -53,6 +53,10 @@ show_diff <- function(diffs, suffix = c(".x", ".y")) {
   tbl
 }
 
+#' Render a diff in a flexdashboard
+#'
+#' @param diff Data frame as returned by [compare].
+#' @export
 render_diff <- function(diff) {
   tempdir(TRUE)
   fp <- tempfile()

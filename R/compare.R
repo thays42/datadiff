@@ -1,4 +1,4 @@
-#' Join two data frames for comparison
+#' Compare two data frames
 #'
 #' @param x,y Data frames to compare
 #' @param suffix Two element character vector of suffixes to disambiguate columns
@@ -7,7 +7,17 @@
 #'   have suffixes as specified by `suffix`. A `.row` helper variable indicates
 #'   the row number. A `.type` helper variable indicates whether the row is in
 #'   `x only`, `y only` or `both` data frames.
+#' @param context Integer vector of length two indicating the number of context
+#'   row to include before and after a difference row.
+#' @param max_differences Maximum number of differences to return.
+#' @return Data frame of observations that are different in `x` and `y`, or
+#'   observations that are in only `x` or `y`, along with context rows.
 #' @export
+compare <- function(x, y, suffix = c(".x", ".y"), context = c(3L, 3L), max_differences = Inf) {
+  compare_join(x, y) |>
+    compare_diff(suffix = suffix, context = context, max_differences = max_differences)
+}
+
 compare_join <- function(x, y, suffix = c(".x", ".y")) {
   suffix_x <- suffix[1]
   suffix_y <- suffix[2]
@@ -57,7 +67,7 @@ compare_diff <- function(data, suffix = c(".x", ".y"), context = c(3L,3L), max_d
   # limit to max differences
   n_differences <- sum(diff_mask)
   if (n_differences > max_differences) {
-    cli::cli_alert_info(glue("{n_differences} differences detected. Returning the first {max_differences} differences only."))
+    cli::cli_alert_info(glue("{n_differences} differences detected. Reporting the first {max_differences} differences only."))
     last_diff <- max(head(which(diff_mask), max_differences))
     diff_mask[(last_diff+1):nrow(data)] <- FALSE
   }
