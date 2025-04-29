@@ -11,23 +11,24 @@
 compare_join <- function(x, y, suffix = c(".x", ".y")) {
   suffix_x <- suffix[1]
   suffix_y <- suffix[2]
+
   full_join(
-    x = mutate(x, .id = row_number()),
-    y = mutate(y, .id = row_number()),
-    by = join_by(.id),
+    x = mutate(x, .rn = row_number()),
+    y = mutate(y, .rn = row_number()),
+    by = join_by(.rn),
     suffix = suffix,
     keep = TRUE
   ) |>
     mutate(
-      .row = coalesce(.id.x, .id.y),
+      .row = coalesce(.rn.x, .rn.y),
       .type = case_when(
-        !is.na(.id.x) & !is.na(.id.y) ~ "both",
-        !is.na(.id.x) ~ suffix[1],
-        !is.na(.id.y) ~ suffix[2]
+        !is.na(.rn.x) & !is.na(.rn.y) ~ "both",
+        !is.na(.rn.x) ~ suffix[1],
+        !is.na(.rn.y) ~ suffix[2]
       ),
       .before = everything()
     ) |>
-    select(-.id.x, -.id.y)
+    select(-.rn.x, -.rn.y)
 }
 
 
