@@ -2,4 +2,5 @@
 #' @import stringr
 #' @import purrr
 #' @import tidyr
+#' @importFrom glue glue
 NULL

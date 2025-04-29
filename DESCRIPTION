@@ -20,4 +20,6 @@ Imports:
     kableExtra,
     purrr,
     stringr,
-    tidyr
+    tidyr,
+    cli,
+    glue
