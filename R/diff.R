@@ -20,9 +20,8 @@ show_diff <- function(diffs, suffix = c(".x", ".y")) {
     ungroup()
 
   # Identify row types
-  sides <- str_remove(suffix, "^\\.")
-  ours <- which(diffs$.side == sides[1])
-  theirs <- which(diffs$.side == sides[2])
+  ours <- which(diffs$.side == suffix[1])
+  theirs <- which(diffs$.side == suffix[2])
   context <- which(diffs$.type == "context")
 
   # Format cells
@@ -30,13 +29,13 @@ show_diff <- function(diffs, suffix = c(".x", ".y")) {
     group_by(.row) |>
     mutate(across(!c(.type, .side), function(x) {
       case_when(
-        .side == sides[1] & !is_equal(x, lead(x)) | .type == sides[1] ~ f_red(x),
-        .side == sides[2] & !is_equal(x, lag(x)) | .type == sides[2] ~ f_green(x),
+        .side == suffix[1] & !is_equal(x, lead(x)) | .type == suffix[1] ~ f_red(x),
+        .side == suffix[2] & !is_equal(x, lag(x)) | .type == suffix[2] ~ f_green(x),
         TRUE ~ f_ctx(x)
       )
     })) |>
     ungroup() |>
-    select(-c(.row, .type, .side))
+    select(-c(.type, .side))
 
   # Build table
   tbl <- formattable::formattable(diffs) |>
@@ -48,7 +47,7 @@ show_diff <- function(diffs, suffix = c(".x", ".y")) {
     kableExtra::row_spec(context, color = "#959595")
 
   walk2(row_groups$start_row, row_groups$end_row, function(a, b) {
-    tbl <<- pack_rows(tbl, start_row=a, end_row=b)
+    tbl <<- kableExtra::pack_rows(tbl, start_row=a, end_row=b)
   })
 
   tbl

@@ -11,25 +11,23 @@
 compare_join <- function(x, y, suffix = c(".x", ".y")) {
   suffix_x <- suffix[1]
   suffix_y <- suffix[2]
-  id_x <- str_c(".id", suffix_x)
-  id_y <- str_c(".id", suffiy_y)
   full_join(
-    x = mutate(x, "{{id_x}}" := row_number()),
-    y = mutate(y, "{{id_y}}" := row_number()),
-    by = c(id_x = id_y),
+    x = mutate(x, .id = row_number()),
+    y = mutate(y, .id = row_number()),
+    by = join_by(.id),
     suffix = suffix,
     keep = TRUE
   ) |>
     mutate(
-      .row = coalesce(.data[[id_x]], .data[[id_y]]),
+      .row = coalesce(.id.x, .id.y),
       .type = case_when(
-        !is.na(.data[[id_x]]) & !is.na(.data[[id_y]]) ~ "both",
-        !is.na(.data[[id_x]]) ~ "x only",
-        !is.na(.data[[id_y]]) ~ "y only"
+        !is.na(.id.x) & !is.na(.id.y) ~ "both",
+        !is.na(.id.x) ~ suffix[1],
+        !is.na(.id.y) ~ suffix[2]
       ),
       .before = everything()
     ) |>
-    select(!all_of(c(id_x, id_y)))
+    select(-.id.x, -.id.y)
 }
 
 
@@ -45,8 +43,8 @@ compare_diff <- function(data, suffix = c(".x", ".y"), context = c(3L,3L), max_d
   # identify columns to compare
   suffix_pattern <- str_c(suffix, collapse = "|")
   compare_columns <- names(data) |>
-    str_subset(str_c("^.+\\.(", suffix_pattern, ")$")) |>
-    str_remove(str_c("\\.(, ", suffix_pattern, ")$")) |>
+    str_subset(str_c("^.+(", suffix_pattern, ")$")) |>
+    str_remove(str_c("(", suffix_pattern, ")$")) |>
     unique()
 
   # identify rows with differences
@@ -87,7 +85,7 @@ compare_diff <- function(data, suffix = c(".x", ".y"), context = c(3L,3L), max_d
     pivot_longer(
       ends_with(suffix[1]) | ends_with(suffix[2]),
       names_to = c(".value", ".side"),
-      names_pattern = str_c("^(.+)\\.(, ", suffix_pattern, ")$")
+      names_pattern = str_c("^(.+)(", suffix_pattern, ")$")
     ) |>
 
     # remove empty rows representing rows in x not in y or vice versa
