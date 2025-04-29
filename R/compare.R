@@ -11,7 +11,7 @@
 #' @return Data frame of observations that are different in `x` and `y`, or
 #'   observations that are in only `x` or `y`, along with context rows.
 #' @export
-compare <- function(x, y, context = c(3L, 3L), max_differences = Inf) {
+compare_data <- function(x, y, context = c(3L, 3L), max_differences = Inf) {
   compare_join(x, y) |>
     compare_diff(context = context, max_differences = max_differences)
 }
@@ -34,7 +34,6 @@ compare_join <- function(x, y) {
     ) |>
     select(-.rn.x, -.rn.y)
 }
-
 
 #' Diff data frames that have been compare joined
 #'
@@ -98,4 +97,55 @@ compare_diff <- function(data, context = c(3L,3L), max_differences = Inf) {
     bind_rows(context) |>
     select(.row, .join_type, .diff_type, .source, everything()) |>
     arrange(.row)
+}
+
+#' Compare column metadata between two data frames
+#'
+#' @param x,y Data frames to compare.
+#' @return A data frame of column metadata differences between
+#'   `x` and `y`.
+#' @export
+compare_columns <- function(x, y) {
+  rc <- tibble()
+
+  # column names
+  x_names <- names(x)
+  x_types <- map_chr(x, col_class) |>
+    set_names(x_names)
+  y_names <- names(y)
+  y_types <- map_chr(y, col_class) |>
+    set_names(y_names)
+
+  if (!setequal(x_names, y_names)) {
+    x_only_names <- setdiff(x_names, y_names)
+    if (length(x_only_names) > 0) {
+      rc <- bind_rows(rc, tibble(
+        .diff = "in x only",
+        column = x_only_names,
+        x_type = x_types[x_only_names]
+      ))
+    }
+    y_only_names <- setdiff(y_names, x_names)
+    if (length(y_only_names) > 0) {
+      rc <- bind_rows(rc, tibble(
+        .diff = "in y only",
+        column = y_only_names,
+        y_type = y_types[y_only_names]
+      ))
+    }
+  }
+
+  names_in_both <- intersect(x_names, y_names)
+
+  # column types
+  diff_types <- names(which(x_types[names_in_both] != y_types[names_in_both]))
+  rc <- bind_rows(rc,tibble(
+    .diff = "type conflict",
+    column = diff_types,
+    x_type = x_types[diff_types],
+    y_type = y_types[diff_types]
+  ))
+
+  rc |>
+    mutate(across(everything(), unname))
 }
