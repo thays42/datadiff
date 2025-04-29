@@ -71,5 +71,10 @@ render_diff <- function(diff) {
       output_dir = tempdir(),
       quiet = TRUE
     )
-  rstudioapi::viewer(out)
+
+  if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+    rstudioapi::viewer(out)
+  } else {
+    utils::browseURL(out)
+  }
 }
