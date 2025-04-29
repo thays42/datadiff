@@ -5,7 +5,7 @@ f_ctx <- formattable::formatter("span", style = "white-space: nowrap; display: b
 #' Render HTML diff
 #'
 #' @param diffs Data frame as returned by [compare_diff]
-show_diff <- function(diffs, suffix = c(".x", ".y")) {
+show_diff <- function(diffs) {
   # Identify blocks of rows for formatting the table
   row_groups <- diffs |>
     mutate(
@@ -20,22 +20,22 @@ show_diff <- function(diffs, suffix = c(".x", ".y")) {
     ungroup()
 
   # Identify row types
-  ours <- which(diffs$.side == suffix[1])
-  theirs <- which(diffs$.side == suffix[2])
-  context <- which(diffs$.type == "context")
+  ours <- which(diffs$.source == "x")
+  theirs <- which(diffs$.source == "y")
+  context <- which(diffs$.diff_type == "context")
 
   # Format cells
   diffs <- diffs |>
     group_by(.row) |>
-    mutate(across(!c(.type, .side), function(x) {
+    mutate(across(!c(.join_type, .source), function(x) {
       case_when(
-        .side == suffix[1] & !is_equal(x, lead(x)) | .type == suffix[1] ~ f_red(x),
-        .side == suffix[2] & !is_equal(x, lag(x)) | .type == suffix[2] ~ f_green(x),
+        .source == "x" & !is_equal(x, lead(x)) | .join_type == "x" ~ f_red(x),
+        .source == "y" & !is_equal(x, lag(x)) | .join_type == "y" ~ f_green(x),
         TRUE ~ f_ctx(x)
       )
     })) |>
     ungroup() |>
-    select(-c(.type, .side))
+    select(-c(.join_type, .diff_type, .source))
 
   # Build table
   tbl <- formattable::formattable(diffs) |>

@@ -4,7 +4,7 @@
 \alias{show_diff}
 \title{Render HTML diff}
 \usage{
-show_diff(diffs, suffix = c(".x", ".y"))
+show_diff(diffs)
 }
 \arguments{
 \item{diffs}{Data frame as returned by \link{compare_diff}}

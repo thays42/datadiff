@@ -4,18 +4,10 @@
 \alias{compare_diff}
 \title{Diff data frames that have been compare joined}
 \usage{
-compare_diff(
-  data,
-  suffix = c(".x", ".y"),
-  context = c(3L, 3L),
-  max_differences = Inf
-)
+compare_diff(data, context = c(3L, 3L), max_differences = Inf)
 }
 \arguments{
 \item{data}{Data frame as returned by \link{compare_join}.}
-
-\item{suffix}{Two element character vector of suffixes to disambiguate columns
-from data frames joined in \link{compare_join}.}
 
 \item{context}{Integer vector of length two indicating the number of context
 row to include before and after a difference row.}

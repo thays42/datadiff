@@ -1,8 +1,6 @@
 #' Compare two data frames
 #'
 #' @param x,y Data frames to compare
-#' @param suffix Two element character vector of suffixes to disambiguate columns
-#'   from `x`, `y`.
 #' @return Data frame of `x`, `y` full joined by row number. Shared variables
 #'   have suffixes as specified by `suffix`. A `.row` helper variable indicates
 #'   the row number. A `.type` helper variable indicates whether the row is in
@@ -13,28 +11,24 @@
 #' @return Data frame of observations that are different in `x` and `y`, or
 #'   observations that are in only `x` or `y`, along with context rows.
 #' @export
-compare <- function(x, y, suffix = c(".x", ".y"), context = c(3L, 3L), max_differences = Inf) {
+compare <- function(x, y, context = c(3L, 3L), max_differences = Inf) {
   compare_join(x, y) |>
-    compare_diff(suffix = suffix, context = context, max_differences = max_differences)
+    compare_diff(context = context, max_differences = max_differences)
 }
 
-compare_join <- function(x, y, suffix = c(".x", ".y")) {
-  suffix_x <- suffix[1]
-  suffix_y <- suffix[2]
-
+compare_join <- function(x, y) {
   full_join(
     x = mutate(x, .rn = row_number()),
     y = mutate(y, .rn = row_number()),
     by = join_by(.rn),
-    suffix = suffix,
     keep = TRUE
   ) |>
     mutate(
       .row = coalesce(.rn.x, .rn.y),
-      .type = case_when(
+      .join_type = case_when(
         !is.na(.rn.x) & !is.na(.rn.y) ~ "both",
-        !is.na(.rn.x) ~ suffix[1],
-        !is.na(.rn.y) ~ suffix[2]
+        !is.na(.rn.x) ~ "x",
+        !is.na(.rn.y) ~ "y"
       ),
       .before = everything()
     ) |>
@@ -45,23 +39,20 @@ compare_join <- function(x, y, suffix = c(".x", ".y")) {
 #' Diff data frames that have been compare joined
 #'
 #' @param data Data frame as returned by [compare_join].
-#' @param suffix Two element character vector of suffixes to disambiguate columns
-#'   from data frames joined in [compare_join].
 #' @param context Integer vector of length two indicating the number of context
 #'   row to include before and after a difference row.
 #' @param max_differences Maximum number of differences to return.
-compare_diff <- function(data, suffix = c(".x", ".y"), context = c(3L,3L), max_differences = Inf) {
+compare_diff <- function(data, context = c(3L,3L), max_differences = Inf) {
   # identify columns to compare
-  suffix_pattern <- str_c(suffix, collapse = "|")
   compare_columns <- names(data) |>
-    str_subset(str_c("^.+(", suffix_pattern, ")$")) |>
-    str_remove(str_c("(", suffix_pattern, ")$")) |>
+    str_subset(str_c("^.+(\\.x|\\.y)$")) |>
+    str_remove(str_c("(\\.x|\\.y)$")) |>
     unique()
 
   # identify rows with differences
   diff_mask <- rep(FALSE, nrow(data))
   for (column in compare_columns) {
-    diff_mask <- diff_mask | !is_equal(data[[paste0(column, suffix[1])]], data[[paste0(column, suffix[2])]])
+    diff_mask <- diff_mask | !is_equal(data[[paste0(column, ".x")]], data[[paste0(column, ".y")]])
   }
 
   # limit to max differences
@@ -86,25 +77,25 @@ compare_diff <- function(data, suffix = c(".x", ".y"), context = c(3L,3L), max_d
   # context rows are pulled from the `x` data frame
   # drop `y` data frame columns and de-suffix `x` data frame columns
   context <- data[context_mask,] |>
-    mutate(.type = "context") |>
-    select(!all_of(str_c(compare_columns, suffix[2]))) |>
-    rename_all(\(x) str_remove(x, str_c("\\", suffix[1], "$")))
+    mutate(.diff_type = "context") |>
+    select(!all_of(str_c(compare_columns, ".y"))) |>
+    rename_all(\(x) str_remove(x, str_c("\\.x$")))
 
   # pull data rows
   data[diff_mask,] |>
     # pivot so that `x` rows stacked on `y` rows.
     pivot_longer(
-      ends_with(suffix[1]) | ends_with(suffix[2]),
-      names_to = c(".value", ".side"),
-      names_pattern = str_c("^(.+)(", suffix_pattern, ")$")
+      ends_with(".x") | ends_with(".y"),
+      names_to = c(".value", ".source"),
+      names_pattern = str_c("^(.+)\\.(x|y)$")
     ) |>
 
     # remove empty rows representing rows in x not in y or vice versa
-    filter(.type == "both" | .type == .side) |>
-    mutate(.type = "diff") |>
+    filter(.join_type == "both" | .join_type == .source) |>
+    mutate(.diff_type = "diff") |>
 
     # add context rows, arrange columns and rows for output
     bind_rows(context) |>
-    select(.row, .type, .side, everything()) |>
+    select(.row, .join_type, .diff_type, .source, everything()) |>
     arrange(.row)
 }

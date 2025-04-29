@@ -12,8 +12,7 @@ diffdata <- function(x, y, max_differences=10, context=c(3L, 3L)) {
     return(meta_diff)
   }
 
-  diff <- compare_join(x, y) |>
-    compare_diff(context = context) |>
+  diff <- compare(x, y, context=context, max_differences=max_differences) |>
     render_diff()
 
   invisible(diff)
