@@ -22,4 +22,6 @@ Imports:
     stringr,
     tidyr,
     cli,
-    glue
+    glue,
+    flexdashboard,
+    rstudioapi

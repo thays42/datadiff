@@ -13,9 +13,9 @@ diffdata <- function(x, y, max_differences=10, context=c(3L, 3L)) {
   }
 
   diff <- compare_join(x, y) |>
-    compare_diff(context = context)
+    compare_diff(context = context) |>
+    render_diff()
 
-  print(show_diff(diff))
   invisible(diff)
 }
 

@@ -1,0 +1,19 @@
+---
+title: "Difference Report"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+params:
+  data: ""
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+## Column
+
+```{r}
+readRDS(params$data)
+```

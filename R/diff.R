@@ -52,3 +52,20 @@ show_diff <- function(diffs, suffix = c(".x", ".y")) {
 
   tbl
 }
+
+render_diff <- function(diff) {
+  tempdir(TRUE)
+  fp <- tempfile()
+
+  diff |>
+    show_diff() |>
+    saveRDS(fp)
+
+  out <- fs::path_package("datadiff", "report.Rmd") |>
+    rmarkdown::render(
+      params = list(data = fp),
+      output_dir = tempdir(),
+      quiet = TRUE
+    )
+  rstudioapi::viewer(out)
+}
