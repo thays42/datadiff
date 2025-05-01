@@ -4,13 +4,21 @@
 \alias{compare_data}
 \title{Compare two data frames}
 \usage{
-compare_data(x, y, context_rows = c(3L, 3L), max_differences = Inf)
+compare_data(
+  x,
+  y,
+  context_rows = c(3L, 3L),
+  context_cols = everything(),
+  max_differences = Inf
+)
 }
 \arguments{
 \item{x, y}{Data frames to compare}
 
 \item{context_rows}{Integer vector of length two indicating the number of context
 row to include before and after a difference row.}
+
+\item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
 
 \item{max_differences}{Maximum number of differences to return.}
 }

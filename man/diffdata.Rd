@@ -4,14 +4,20 @@
 \alias{diffdata}
 \title{Diff Data Frames}
 \usage{
-diffdata(x, y, max_differences = 10, context = c(3L, 3L))
+diffdata(
+  x,
+  y,
+  max_differences = 10,
+  context_rows = c(3L, 3L),
+  context_cols = everything()
+)
 }
 \arguments{
 \item{x, y}{Data frames to diff.}
 
 \item{max_differences}{Maximum differences to detect.}
 
-\item{context}{Number of observations before and after difference rows to
+\item{context_rows}{Number of observations before and after difference rows to
 contextualize differences.}
 }
 \description{
