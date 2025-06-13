@@ -2,8 +2,12 @@
 #'
 #' @param x,y Data frames to diff.
 #' @param max_differences Maximum differences to detect.
-#' @param context_rows Number of observations before and after difference rows to
-#'   contextualize differences.
+#' @param context_rows Integer vector of length two indicating the number of context
+#'   row to include before and after a difference row.
+#' @param context_cols <[`tidy-select`][dplyr_tidy_select]> Columns to include as context.
+#' @param max_differences Maximum number of differences to return.
+#' @return Data frame of observations that are different in `x` and `y`, or
+#'   observations that are in only `x` or `y`, along with context rows.
 #' @export
 diffdata <- function(
   x,
