@@ -118,6 +118,94 @@ assert_length <- function(
   invisible(x)
 }
 
+#' Assert that a numeric vector is bounded by a min and/or max value
+#'
+#' @param x The numeric vector to check, or an object to pass to `fn`
+#' @param exact Exact value `x` should have (optional)
+#' @param min Minimum value `x` should have (optional)
+#' @param max Maximum value `x` should have (optional)
+#' @param fn Function to apply to x that returns the numeric vector to check (optional)
+#' @param arg_name Optional name of the argument for more informative error messages,
+#'                defaults to the deparsed name of the object
+#'
+#' @return Invisibly returns the object if it passes the check, otherwise aborts
+assert_bounds <- function(
+  x,
+  exact = NULL,
+  min = NULL,
+  max = NULL,
+  fn = NULL,
+  label = NULL
+) {
+  # Check if the user provided any constraints
+  if (is.null(exact) && is.null(min) && is.null(max)) {
+    rlang::abort(
+      "At least one of 'exact', 'min', or 'max' must be specified"
+    )
+  }
+
+  # Check for conflicting constraints
+  if (!is.null(exact) && (!is.null(min) || !is.null(max))) {
+    rlang::abort(
+      "Cannot specify both 'exact' and 'min'/'max' constraints",
+    )
+  }
+
+  if (!is.null(fn)) {
+    if (!is.function(fn)) rlang::abort("'fn' must be a function")
+    actual <- fn(x)
+    if (!is.numeric(actual))
+      rlang::abort("'fn(x)' must return a numeric vector")
+
+    label <- label %||%
+      paste0(
+        deparse(substitute(fn)),
+        "(",
+        deparse(substitute(x)),
+        ")"
+      )
+  } else if (!is.numeric(x)) {
+    rlang::abort("`x` must be a numeric vector")
+  } else {
+    actual <- x
+    label <- label %||% deparse(substitute(x))
+  }
+
+  if (!is.null(exact)) {
+    if (actual != exact) {
+      rlang::abort(
+        glue::glue(
+          "'{label}' must be {exact}, not {actual}"
+        ),
+        call = rlang::caller_env()
+      )
+    }
+  } else {
+    # Check min constraint if provided
+    if (!is.null(min) && actual < min) {
+      rlang::abort(
+        glue::glue(
+          "'{label}' must be at least {min}, not {actual}"
+        ),
+        call = rlang::caller_env()
+      )
+    }
+
+    # Check max constraint if provided
+    if (!is.null(max) && actual > max) {
+      rlang::abort(
+        glue::glue(
+          "'{label}' must be at most {max}, not {actual}"
+        ),
+        call = rlang::caller_env()
+      )
+    }
+  }
+
+  # Return the object invisibly if all checks pass
+  invisible(x)
+}
+
 col_class <- function(x) {
   x |>
     class() |>

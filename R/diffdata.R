@@ -16,14 +16,19 @@ diffdata <- function(
   context_rows = c(3L, 3L),
   context_cols = everything()
 ) {
-  assert_class(x, "data.frame")
-  assert_class(y, "data.frame")
+  assert_class(x, "data.frame") |>
+    assert_bounds(min = 1, fn = nrow)
+
+  assert_class(y, "data.frame") |>
+    assert_bounds(min = 1, fn = nrow)
+
   max_differences <- max_differences |>
     assert_class(c("numeric", "integer")) |>
     assert_length(1L) |>
     as.integer()
+
   context_rows <- context_rows |>
-    assert_class(c("numeric", "integer")) |>
+    assert_class("numeric") |>
     assert_length(2L) |>
     as.integer()
 
