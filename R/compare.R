@@ -135,6 +135,26 @@ compare_diff <- function(
     arrange(.row)
 }
 
+#' Compare groups between two data frames
+#'
+#' @param x,y Data frames to compare
+#' @param group_cols <[`tidy-select`][dplyr_tidy_select]> Columns to use for grouping
+#' @return A data frame containing the grouping columns and two additional columns,
+#'   `in_x` and `in_y`, which are TRUE if the group values are in the corresponding
+#'   data frame and FALSE otherwise. Records where both `in_x` and `in_y` are TRUE
+#'   are excluded from the output.
+#' @export
+compare_groups <- function(x, y, group_cols) {
+  x_groups <- x |> select({{ group_cols }}) |> distinct() |> mutate(in_x = TRUE)
+  y_groups <- y |> select({{ group_cols }}) |> distinct() |> mutate(in_y = TRUE)
+  join_cols <- setdiff(names(x_groups), "in_x")
+
+  full_join(x_groups, y_groups, by = join_cols) |>
+    filter(is.na(in_x) | is.na(in_y)) |>
+    mutate(in_x = replace_na(in_x, FALSE), in_y = replace_na(in_y, FALSE)) |>
+    arrange(pick(join_cols))
+}
+
 #' Compare column metadata between two data frames
 #'
 #' @param x,y Data frames to compare.

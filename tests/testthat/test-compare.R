@@ -62,3 +62,150 @@ test_that("compare_join handles empty dataframes", {
   expect_equal(nrow(result), 0)
   expect_true(all(c(".row", ".join_type") %in% names(result)))
 })
+
+test_that("compare_groups works with equal dataframes", {
+  df1 <- tibble(group = c("A", "B", "C"), value = 1:3)
+  df2 <- tibble(group = c("A", "B", "C"), value = 4:6)
+
+  result <- compare_groups(df1, df2, group)
+
+  # Should return empty since all groups are in both dataframes
+  expect_equal(nrow(result), 0)
+  expect_named(result, c("group", "in_x", "in_y"))
+})
+
+test_that("compare_groups identifies groups only in x or y", {
+  df1 <- tibble(group = c("A", "B", "C"), value = 1:3)
+  df2 <- tibble(group = c("A", "D"), value = 4:5)
+
+  result <- compare_groups(df1, df2, group)
+
+  expected <- tibble(
+    group = c("B", "C", "D"),
+    in_x = c(TRUE, TRUE, FALSE),
+    in_y = c(FALSE, FALSE, TRUE)
+  )
+  expect_equal(result, expected)
+})
+
+test_that("compare_groups identifies groups only in y", {
+  df1 <- tibble(group = c("A", "B"), value = 1:2)
+  df2 <- tibble(group = c("A", "C", "D"), value = 3:5)
+
+  result <- compare_groups(df1, df2, group)
+
+  expected <- tibble(
+    group = c("B", "C", "D"),
+    in_x = c(TRUE, FALSE, FALSE),
+    in_y = c(FALSE, TRUE, TRUE)
+  )
+  expect_equal(result, expected)
+})
+
+test_that("compare_groups works with multiple grouping columns", {
+  df1 <- tibble(
+    group1 = c("A", "A", "B"),
+    group2 = c("X", "Y", "X"),
+    value = 1:3
+  )
+  df2 <- tibble(
+    group1 = c("A", "B", "C"),
+    group2 = c("X", "Y", "X"),
+    value = 4:6
+  )
+
+  result <- compare_groups(df1, df2, c(group1, group2))
+
+  expect_equal(nrow(result), 4)
+  expect_equal(result$group1, c("A", "B", "B", "C"))
+  expect_equal(result$group2, c("Y", "X", "Y", "X"))
+  expect_equal(result$in_x, c(TRUE, TRUE, FALSE, FALSE))
+  expect_equal(result$in_y, c(FALSE, FALSE, TRUE, TRUE))
+})
+
+test_that("compare_groups works with tidy-select syntax", {
+  df1 <- tibble(
+    group = c("A", "B", "C"),
+    other = c("X", "Y", "Z"),
+    value = 1:3
+  )
+  df2 <- tibble(
+    group = c("A", "D"),
+    other = c("X", "W"),
+    value = 4:5
+  )
+
+  result <- compare_groups(df1, df2, starts_with("group"))
+
+  expect_equal(nrow(result), 3)
+  expect_equal(result$group, c("B", "C", "D"))
+  expect_equal(result$in_x, c(TRUE, TRUE, FALSE))
+  expect_equal(result$in_y, c(FALSE, FALSE, TRUE))
+})
+
+test_that("compare_groups handles empty dataframes", {
+  df1 <- tibble(group = character(0), value = numeric(0))
+  df2 <- tibble(group = c("A", "B"), value = 1:2)
+
+  result <- compare_groups(df1, df2, group)
+
+  expect_equal(nrow(result), 2)
+  expect_equal(result$group, c("A", "B"))
+  expect_equal(result$in_x, c(FALSE, FALSE))
+  expect_equal(result$in_y, c(TRUE, TRUE))
+})
+
+test_that("compare_groups handles both empty dataframes", {
+  df1 <- tibble(group = character(0), value = numeric(0))
+  df2 <- tibble(group = character(0), value = numeric(0))
+
+  result <- compare_groups(df1, df2, group)
+
+  expect_equal(nrow(result), 0)
+  expect_named(result, c("group", "in_x", "in_y"))
+})
+
+test_that("compare_groups works with multiple grouping columns (all unique)", {
+  df1 <- tibble(
+    group1 = c("A", "A", "B"),
+    group2 = c("X", "Y", "X"),
+    value = 1:3
+  )
+  df2 <- tibble(
+    group1 = c("A", "B", "C"),
+    group2 = c("X", "Y", "X"),
+    value = 4:6
+  )
+
+  result <- compare_groups(df1, df2, c(group1, group2))
+
+  expected <- tibble(
+    group1 = c("A", "B", "B", "C"),
+    group2 = c("Y", "X", "Y", "X"),
+    in_x = c(TRUE, TRUE, FALSE, FALSE),
+    in_y = c(FALSE, FALSE, TRUE, TRUE)
+  )
+  expect_equal(result, expected)
+})
+
+test_that("compare_groups works with tidy-select syntax (all unique)", {
+  df1 <- tibble(
+    group = c("A", "B", "C"),
+    other = c("X", "Y", "Z"),
+    value = 1:3
+  )
+  df2 <- tibble(
+    group = c("A", "D"),
+    other = c("X", "W"),
+    value = 4:5
+  )
+
+  result <- compare_groups(df1, df2, starts_with("group"))
+
+  expected <- tibble(
+    group = c("B", "C", "D"),
+    in_x = c(TRUE, TRUE, FALSE),
+    in_y = c(FALSE, FALSE, TRUE)
+  )
+  expect_equal(result, expected)
+})
