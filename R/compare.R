@@ -131,7 +131,8 @@ compare_diff <- function(
       .join_type,
       .diff_type,
       .source,
-      {{ context_cols }} | all_of(diff_columns)
+      all_of(context_cols),
+      all_of(diff_columns)
     ) |>
     arrange(.row)
 }

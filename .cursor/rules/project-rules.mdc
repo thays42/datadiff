@@ -1,0 +1,110 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+Project Rules for datadiff R Package
+1. Code Quality & Style
+R Coding Standards
+Follow tidyverse style guide: Use snake_case for functions and variables, camelCase for classes
+Use roxygen2 documentation: All exported functions must have complete @param, @return, and @export tags
+Pipe operator preference: Use |> for data transformations, prefer functional programming style
+Consistent naming: Use descriptive function names that clearly indicate purpose (e.g., compare_data, diffdata, is_equal)
+Code Organization
+Single responsibility: Each function should have one clear purpose
+Modular design: Break complex operations into smaller, testable functions
+Error handling: Use rlang::abort() for user-facing errors with clear, actionable messages
+Input validation: Always validate inputs using the assertion functions in utils.R
+2. Testing Requirements
+Test Coverage
+Write tests first: Before modifying any application code, write or update tests
+Comprehensive testing: Every exported function must have corresponding tests
+Edge case coverage: Test boundary conditions, empty inputs, and error conditions
+Test organization: Group related tests using descriptive test_that() blocks
+Test Structure
+Helper data: Use helper-data.R for shared test datasets
+Test naming: Use descriptive test names that explain the expected behavior
+Assertion clarity: Use specific expect_* functions (e.g., expect_equal, expect_error, expect_true)
+Running Tests
+Always run tests: Use make test before committing any changes
+Test specific files: Use make test R/filename.R for targeted testing
+Fix failing tests: Never commit code that breaks existing tests
+3. Package Development
+Documentation
+Complete DESCRIPTION: Update package metadata, dependencies, and description
+README.md: Maintain comprehensive usage examples and installation instructions
+Function documentation: Include examples in roxygen2 comments using @examples
+Vignettes: Create vignettes for complex functionality (currently missing)
+Dependencies
+Minimal dependencies: Only add necessary packages to Imports and Suggests
+Version constraints: Specify minimum versions for critical dependencies
+Namespace management: Keep NAMESPACE clean and only export necessary functions
+4. Data Frame Comparison Logic
+Core Functionality
+Row-by-row comparison: Use compare_join() for full outer joins by row number
+Column metadata: Use compare_columns() to detect structural differences
+Context preservation: Include configurable context rows around differences
+Performance considerations: Limit output with max_differences parameter
+Equality Testing
+Robust comparison: Handle NA values, infinite values, and numeric tolerance
+Type safety: Prevent errors when comparing different data types
+Consistent behavior: Ensure is_equal() works across all data types
+5. HTML Report Generation
+Interactive Features
+Flexdashboard integration: Use flexdashboard for responsive HTML reports
+Visual formatting: Use formattable and kableExtra for styled tables
+Color coding: Red for deletions/changes in x, green for additions/changes in y
+Context highlighting: Clearly distinguish between diff rows and context rows
+Report Structure
+Temporary file handling: Use tempfile() for data passing to Rmd
+RStudio integration: Support both RStudio viewer and browser display
+Error handling: Graceful fallback when optional dependencies are missing
+6. Error Handling & Validation
+Input Validation
+Use assertion functions: Leverage assert_class(), assert_length(), assert_bounds()
+Clear error messages: Provide specific, actionable error messages
+Type checking: Validate data types before processing
+Bounds checking: Ensure numeric parameters are within valid ranges
+Edge Cases
+Empty data frames: Handle zero-row and zero-column data frames gracefully
+Missing columns: Detect and report structural differences
+Large datasets: Implement reasonable limits to prevent memory issues
+7. Performance & Memory
+Optimization
+Lazy evaluation: Use tidyverse functions that support lazy evaluation
+Memory efficiency: Avoid unnecessary data copying
+Scalability: Test with larger datasets to ensure reasonable performance
+Context limits: Default to reasonable context row limits (3 before, 3 after)
+8. Development Workflow
+Version Control
+Meaningful commits: Write clear commit messages describing changes
+Feature branches: Use branches for new features or major changes
+Pull request reviews: Require code review for all changes
+Package Management
+renv integration: Use renv for reproducible package management
+Dependency tracking: Keep renv.lock updated with current dependency versions
+Development tools: Include devtools, testthat, lintr in Suggests
+9. Current Issues to Address
+Immediate Fixes Needed
+Type validation bugs: Fix assert_class() calls that incorrectly reject integer inputs
+Mixed type comparison: Fix is_equal() to handle type mismatches gracefully
+Test failures: Address all failing tests before adding new features
+Missing Documentation
+README.md: Currently empty, needs comprehensive usage examples
+DESCRIPTION: Update with proper title, description, and author information
+Vignettes: Create usage vignettes for complex workflows
+10. Quality Assurance
+Code Review Checklist
+[ ] All tests pass (make test)
+[ ] No linting errors (make lint)
+[ ] Documentation is complete and accurate
+[ ] Error messages are clear and actionable
+[ ] Performance is acceptable for typical use cases
+[ ] Edge cases are handled gracefully
+Release Preparation
+[ ] Update version number in DESCRIPTION
+[ ] Run full test suite
+[ ] Check package builds successfully
+[ ] Verify all examples run without errors
+[ ] Update NEWS.md with changes
+These rules ensure the datadiff package maintains high quality, reliability, and usability while providing powerful data frame comparison tools for R users.

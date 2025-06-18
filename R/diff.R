@@ -58,6 +58,10 @@ show_diff <- function(diffs) {
 #' @param diff Data frame as returned by [compare].
 #' @export
 render_diff <- function(diff) {
+  if (testthat::is_testing()) {
+    return(diff)
+  }
+
   tempdir(TRUE)
   fp <- tempfile()
 

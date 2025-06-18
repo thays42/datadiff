@@ -7,7 +7,9 @@
 #' @export
 is_equal <- function(x, y, tol = .Machine$double.eps^0.5) {
   # fmt: skip
-  if (is.numeric(x)) {(
+  if (is.numeric(x) != is.numeric(y)) {
+    return(FALSE)
+  } else if (is.numeric(x) && is.numeric(y)) {(
       # both NA
       (is.na(x) & is.na(y)) |
 

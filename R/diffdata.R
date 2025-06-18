@@ -16,21 +16,20 @@ diffdata <- function(
   context_rows = c(3L, 3L),
   context_cols = everything()
 ) {
-  assert_class(x, "data.frame") |>
-    assert_bounds(min = 1, fn = nrow)
 
-  assert_class(y, "data.frame") |>
-    assert_bounds(min = 1, fn = nrow)
+  stopifnot(
+    "x must be a data frame" = is.data.frame(x),
+    "x must have at least one row" = nrow(x) > 0,
+    "y must be a data frame" = is.data.frame(y),
+    "y must have at least one row" = nrow(y) > 0,
+    "max_differences must be numeric" = is.numeric(max_differences),
+    "max_differences must be length 1" = length(max_differences) == 1,
+    "context_rows must be numeric" = is.numeric(context_rows),
+    "context_rows must be length 2" = length(context_rows) == 2
+  )
 
-  max_differences <- max_differences |>
-    assert_class(c("numeric", "integer")) |>
-    assert_length(1L) |>
-    as.integer()
-
-  context_rows <- context_rows |>
-    assert_class("numeric") |>
-    assert_length(2L) |>
-    as.integer()
+  max_differences <- as.integer(max_differences)
+  context_rows <- as.integer(context_rows)
 
   col_diff <- compare_columns(x, y)
   if (nrow(col_diff) > 0) {

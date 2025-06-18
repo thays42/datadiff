@@ -32,3 +32,7 @@ else
 		R -s -e "testthat::test_file('$$file')"; \
 	done
 endif
+
+lint:
+	@echo "Running linting..."
+	@R -s -e "lintr::lint_package()"
