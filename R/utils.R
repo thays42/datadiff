@@ -152,10 +152,13 @@ assert_bounds <- function(
   }
 
   if (!is.null(fn)) {
-    if (!is.function(fn)) rlang::abort("'fn' must be a function")
+    if (!is.function(fn)) {
+      rlang::abort("'fn' must be a function")
+    }
     actual <- fn(x)
-    if (!is.numeric(actual))
+    if (!is.numeric(actual)) {
       rlang::abort("'fn(x)' must return a numeric vector")
+    }
 
     label <- label %||%
       paste0(

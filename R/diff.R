@@ -1,6 +1,15 @@
-f_green <- formattable::formatter("span", style = "color:green; white-space: nowrap; display: block; overflow: clip; max-width: 200px")
-f_red <- formattable::formatter("span", style = "color:red; white-space: nowrap; display: block; overflow: clip; max-width: 200px")
-f_ctx <- formattable::formatter("span", style = "white-space: nowrap; display: block; overflow: clip; max-width: 200px")
+f_green <- formattable::formatter(
+  "span",
+  style = "color:green; white-space: nowrap; display: block; overflow: clip; max-width: 200px"
+)
+f_red <- formattable::formatter(
+  "span",
+  style = "color:red; white-space: nowrap; display: block; overflow: clip; max-width: 200px"
+)
+f_ctx <- formattable::formatter(
+  "span",
+  style = "white-space: nowrap; display: block; overflow: clip; max-width: 200px"
+)
 
 #' Render HTML diff
 #'
@@ -40,14 +49,22 @@ show_diff <- function(diffs) {
   # Build table
   tbl <- formattable::formattable(diffs) |>
     kableExtra::kbl(escape = FALSE, row.names = FALSE) |>
-    kableExtra::kable_paper(full_width = FALSE, fixed_thead = T, html_font = "monospace") |>
-    kableExtra::column_spec(1:ncol(diffs), border_left = "1px solid #eeeeee", border_right = "1px solid #eeeeee") |>
+    kableExtra::kable_paper(
+      full_width = FALSE,
+      fixed_thead = T,
+      html_font = "monospace"
+    ) |>
+    kableExtra::column_spec(
+      seq_along(diffs),
+      border_left = "1px solid #eeeeee",
+      border_right = "1px solid #eeeeee"
+    ) |>
     kableExtra::row_spec(ours, background = "#e6a8a8") |>
     kableExtra::row_spec(theirs, background = "#a7d1a9") |>
     kableExtra::row_spec(context, color = "#959595")
 
   walk2(row_groups$start_row, row_groups$end_row, function(a, b) {
-    tbl <<- kableExtra::pack_rows(tbl, start_row=a, end_row=b)
+    tbl <<- kableExtra::pack_rows(tbl, start_row = a, end_row = b)
   })
 
   tbl
@@ -58,10 +75,6 @@ show_diff <- function(diffs) {
 #' @param diff Data frame as returned by [compare].
 #' @export
 render_diff <- function(diff) {
-  if (testthat::is_testing()) {
-    return(diff)
-  }
-
   tempdir(TRUE)
   fp <- tempfile()
 
@@ -76,7 +89,9 @@ render_diff <- function(diff) {
       quiet = TRUE
     )
 
-  if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+  if (
+    requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()
+  ) {
     rstudioapi::viewer(out)
   } else {
     utils::browseURL(out)

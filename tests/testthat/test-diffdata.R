@@ -25,13 +25,28 @@ test_that("diffdata validates inputs correctly", {
   )
 
   # Test max_differences must be numeric and length 1
-  expect_error(diffdata(df1, df2, max_differences = "ten"), "max_differences must be numeric")
-  expect_error(diffdata(df1, df2, max_differences = 1:3), "max_differences must be length 1")
+  expect_error(
+    diffdata(df1, df2, max_differences = "ten"),
+    "max_differences must be numeric"
+  )
+  expect_error(
+    diffdata(df1, df2, max_differences = 1:3),
+    "max_differences must be length 1"
+  )
 
   # Test context_rows must be numeric and length 2
-  expect_error(diffdata(df1, df2, context_rows = "three"), "context_rows must be numeric")
-  expect_error(diffdata(df1, df2, context_rows = 1:3), "context_rows must be length 2")
-  expect_error(diffdata(df1, df2, context_rows = 3), "context_rows must be length 2")
+  expect_error(
+    diffdata(df1, df2, context_rows = "three"),
+    "context_rows must be numeric"
+  )
+  expect_error(
+    diffdata(df1, df2, context_rows = 1:3),
+    "context_rows must be length 2"
+  )
+  expect_error(
+    diffdata(df1, df2, context_rows = 3),
+    "context_rows must be length 2"
+  )
 
   # Test column differences handling
   df3 <- tibble(a = 1:5, c = letters[1:5]) # different column names

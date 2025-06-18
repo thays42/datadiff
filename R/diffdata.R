@@ -16,7 +16,6 @@ diffdata <- function(
   context_rows = c(3L, 3L),
   context_cols = everything()
 ) {
-
   stopifnot(
     "x must be a data frame" = is.data.frame(x),
     "x must have at least one row" = nrow(x) > 0,
