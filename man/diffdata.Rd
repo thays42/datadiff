@@ -15,10 +15,16 @@ diffdata(
 \arguments{
 \item{x, y}{Data frames to diff.}
 
-\item{max_differences}{Maximum differences to detect.}
+\item{max_differences}{Maximum number of differences to return.}
 
-\item{context_rows}{Number of observations before and after difference rows to
-contextualize differences.}
+\item{context_rows}{Integer vector of length two indicating the number of context
+row to include before and after a difference row.}
+
+\item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
+}
+\value{
+Data frame of observations that are different in \code{x} and \code{y}, or
+observations that are in only \code{x} or \code{y}, along with context rows.
 }
 \description{
 Diff Data Frames

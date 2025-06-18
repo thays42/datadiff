@@ -3,6 +3,7 @@
 export(assert_length)
 export(compare_columns)
 export(compare_data)
+export(compare_groups)
 export(diffdata)
 export(is_equal)
 export(render_diff)
