@@ -59,8 +59,6 @@ compare_diff <- function(
     unique()
 
   # identify rows with differences
-  # diff_mask <- rep(FALSE, nrow(data))
-  # col_mask <- rep(FALSE, length(compare_cols))
   mask <- matrix(FALSE, nrow = nrow(data), ncol = length(compare_cols))
   colnames(mask) <- compare_cols
   for (column in compare_cols) {

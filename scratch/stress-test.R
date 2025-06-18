@@ -5,7 +5,7 @@ x <- bind_cols(
   set_names(example_timeseries, paste0(names(example_timeseries), ".d")),
   set_names(example_timeseries, paste0(names(example_timeseries), ".e"))
 )
-x <- x[rep(1:nrow(x), times = 10000), ]
+x <- x[rep(seq_along(x), times = 10000), ]
 
 y <- x
 y$value1.a[33] <- -999
@@ -29,7 +29,7 @@ x <- bind_cols(
   set_names(example_timeseries, paste0(names(example_timeseries), ".d")),
   set_names(example_timeseries, paste0(names(example_timeseries), ".e"))
 )
-x <- x[rep(1:nrow(x), times = 10), ]
+x <- x[rep(seq_along(x), times = 10), ]
 
 y <- x
 y$value1.a[33] <- -999

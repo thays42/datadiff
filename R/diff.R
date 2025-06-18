@@ -51,7 +51,7 @@ show_diff <- function(diffs) {
     kableExtra::kbl(escape = FALSE, row.names = FALSE) |>
     kableExtra::kable_paper(
       full_width = FALSE,
-      fixed_thead = T,
+      fixed_thead = TRUE,
       html_font = "monospace"
     ) |>
     kableExtra::column_spec(

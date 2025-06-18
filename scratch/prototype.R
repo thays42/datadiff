@@ -137,7 +137,7 @@ show_diff <- function(diffs) {
 
   tbl <- formattable(diffs) |>
     kbl(escape = FALSE, row.names = FALSE) |>
-    kable_paper(full_width = FALSE, fixed_thead = T, html_font = "monospace") |>
+    kable_paper(full_width = FALSE, fixed_thead = TRUE, html_font = "monospace") |>
     column_spec(
       seq_along(diffs),
       border_left = "1px solid #eeeeee",
