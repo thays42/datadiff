@@ -1,11 +1,10 @@
 Package: datadiff
-Title: What the Package Does (One Line, Title Case)
+Title: Data Frame Comparison Tools for R
 Version: 0.0.0.9000
 Authors@R:
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+    person("Thays", "Silva", email = "thays.silva@example.com", role = c("aut", "cre"))
+Description: Tools to compare and visualize differences between data frames, including row-by-row and column-wise comparison, context-aware diffing, and HTML report generation for data analysis workflows.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
@@ -26,5 +25,5 @@ Imports:
     tidyr,
     cli,
     glue,
-    rlang,
-    flexdashboard
+    fs,
+    rmarkdown
