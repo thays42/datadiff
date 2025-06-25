@@ -89,6 +89,10 @@ render_diff <- function(diff) {
       quiet = TRUE
     )
 
+  if (!interactive()) {
+    return()
+  }
+
   if (
     requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()
   ) {

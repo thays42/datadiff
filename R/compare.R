@@ -152,7 +152,7 @@ compare_groups <- function(x, y, group_cols) {
   full_join(x_groups, y_groups, by = join_cols) |>
     filter(is.na(in_x) | is.na(in_y)) |>
     mutate(in_x = replace_na(in_x, FALSE), in_y = replace_na(in_y, FALSE)) |>
-    arrange(pick(join_cols))
+    arrange(pick(all_of(join_cols)))
 }
 
 #' Compare column metadata between two data frames
