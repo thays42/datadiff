@@ -35,11 +35,11 @@ compare_join <- function(x, y) {
     keep = TRUE
   ) |>
     mutate(
-      .row = coalesce(.rn.x, .rn.y),
+      .row = coalesce(.data$.rn.x, .data$.rn.y),
       .join_type = case_when(
-        !is.na(.rn.x) & !is.na(.rn.y) ~ "both",
-        !is.na(.rn.x) ~ "x",
-        !is.na(.rn.y) ~ "y"
+        !is.na(.data$.rn.x) & !is.na(.data$.rn.y) ~ "both",
+        !is.na(.data$.rn.x) ~ "x",
+        !is.na(.data$.rn.y) ~ "y"
       ),
       .before = everything()
     ) |>
@@ -119,7 +119,7 @@ compare_diff <- function(
     ) |>
 
     # remove empty rows representing rows in x not in y or vice versa
-    filter(.join_type == "both" | .join_type == .source) |>
+    filter(.data$.join_type == "both" | .data$.join_type == .data$.source) |>
     mutate(.diff_type = "diff") |>
 
     # add context rows, arrange columns and rows for output
@@ -132,7 +132,7 @@ compare_diff <- function(
       all_of(context_cols),
       all_of(diff_columns)
     ) |>
-    arrange(.row)
+    arrange(.data$.row)
 }
 
 #' Compare groups between two data frames
@@ -150,8 +150,11 @@ compare_groups <- function(x, y, group_cols) {
   join_cols <- setdiff(names(x_groups), "in_x")
 
   full_join(x_groups, y_groups, by = join_cols) |>
-    filter(is.na(in_x) | is.na(in_y)) |>
-    mutate(in_x = replace_na(in_x, FALSE), in_y = replace_na(in_y, FALSE)) |>
+    filter(is.na(.data$in_x) | is.na(.data$in_y)) |>
+    mutate(
+      in_x = replace_na(.data$in_x, FALSE),
+      in_y = replace_na(.data$in_y, FALSE)
+    ) |>
     arrange(pick(all_of(join_cols)))
 }
 

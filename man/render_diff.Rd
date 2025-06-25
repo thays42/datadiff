@@ -7,7 +7,7 @@
 render_diff(diff)
 }
 \arguments{
-\item{diff}{Data frame as returned by \link{compare}.}
+\item{diff}{Data frame as returned by compare_data.}
 }
 \description{
 Render a diff in a flexdashboard

@@ -13,18 +13,18 @@ f_ctx <- formattable::formatter(
 
 #' Render HTML diff
 #'
-#' @param diffs Data frame as returned by [compare_diff]
+#' @param diffs Data frame as returned by compare_diff (internal)
 show_diff <- function(diffs) {
   # Identify blocks of rows for formatting the table
   row_groups <- diffs |>
     mutate(
       .rn = row_number(),
-      .block = cumsum(replace_na(.row > lag(.row) + 1, FALSE))
+      .block = cumsum(replace_na(.data$.row > lag(.data$.row) + 1, FALSE))
     ) |>
-    group_by(.block) |>
+    group_by(.data$.block) |>
     summarize(
-      start_row = min(.rn),
-      end_row = max(.rn)
+      start_row = min(.data$.rn),
+      end_row = max(.data$.rn)
     ) |>
     ungroup()
 
@@ -35,11 +35,13 @@ show_diff <- function(diffs) {
 
   # Format cells
   diffs <- diffs |>
-    group_by(.row) |>
+    group_by(.data$.row) |>
     mutate(across(!c(.join_type, .source), function(x) {
       case_when(
-        .source == "x" & !is_equal(x, lead(x)) | .join_type == "x" ~ f_red(x),
-        .source == "y" & !is_equal(x, lag(x)) | .join_type == "y" ~ f_green(x),
+        .data$.source == "x" & !is_equal(x, lead(x)) | .data$.join_type == "x" ~
+          f_red(x),
+        .data$.source == "y" & !is_equal(x, lag(x)) | .data$.join_type == "y" ~
+          f_green(x),
         TRUE ~ f_ctx(x)
       )
     })) |>
@@ -72,9 +74,15 @@ show_diff <- function(diffs) {
 
 #' Render a diff in a flexdashboard
 #'
-#' @param diff Data frame as returned by [compare].
+#' @param diff Data frame as returned by compare_data.
 #' @export
 render_diff <- function(diff) {
+  if (!requireNamespace("flexdashboard", quietly = TRUE)) {
+    stop(
+      "flexdashboard is not installed. Please install it with `install.packages('flexdashboard')`."
+    )
+  }
+
   tempdir(TRUE)
   fp <- tempfile()
 

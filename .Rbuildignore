@@ -2,3 +2,9 @@
 ^renv\.lock$
 ^datadiff\.Rproj$
 ^\.Rproj\.user$
+^\.lintr$
+^\.cursor$
+^\.cursorignore$
+^Makefile$
+^dev$
+^scratch$

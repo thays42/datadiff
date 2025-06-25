@@ -7,7 +7,7 @@
 show_diff(diffs)
 }
 \arguments{
-\item{diffs}{Data frame as returned by \link{compare_diff}}
+\item{diffs}{Data frame as returned by compare_diff (internal)}
 }
 \description{
 Render HTML diff

@@ -36,3 +36,11 @@ endif
 lint:
 	@echo "Running linting..."
 	@R -s -e "lintr::lint_package()"
+
+check:
+	@echo "Running checks..."
+	@R -s -e "devtools::check()"
+
+document:
+	@echo "Running document..."
+	@R -s -e "devtools::document()"
