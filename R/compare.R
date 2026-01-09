@@ -25,6 +25,18 @@ compare_data <- function(
   max_differences = Inf,
   tolerance = .Machine$double.eps^0.5
 ) {
+  stopifnot(
+    "x must be a data frame" = is.data.frame(x),
+    "y must be a data frame" = is.data.frame(y),
+    "context_rows must be numeric" = is.numeric(context_rows),
+    "context_rows must be length 2" = length(context_rows) == 2,
+    "max_differences must be numeric" = is.numeric(max_differences),
+    "max_differences must be length 1" = length(max_differences) == 1,
+    "tolerance must be numeric" = is.numeric(tolerance),
+    "tolerance must be length 1" = length(tolerance) == 1,
+    "tolerance must be non-negative" = tolerance >= 0
+  )
+
   compare_join(x, y) |>
     compare_diff(
       context_rows = context_rows,
@@ -155,6 +167,11 @@ compare_diff <- function(
 #'   are excluded from the output.
 #' @export
 compare_groups <- function(x, y, group_cols) {
+  stopifnot(
+    "x must be a data frame" = is.data.frame(x),
+    "y must be a data frame" = is.data.frame(y)
+  )
+
   x_groups <- x |> select({{ group_cols }}) |> distinct() |> mutate(in_x = TRUE)
   y_groups <- y |> select({{ group_cols }}) |> distinct() |> mutate(in_y = TRUE)
   join_cols <- setdiff(names(x_groups), "in_x")
@@ -182,6 +199,11 @@ compare_groups <- function(x, y, group_cols) {
 #'   Returns an empty data frame if there are no differences.
 #' @export
 compare_columns <- function(x, y) {
+  stopifnot(
+    "x must be a data frame" = is.data.frame(x),
+    "y must be a data frame" = is.data.frame(y)
+  )
+
   rc <- tibble()
 
   # column names
