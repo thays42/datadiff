@@ -60,6 +60,8 @@ test_that("diffdata validates inputs correctly", {
 })
 
 test_that("diffdata handles edge cases", {
+  skip_if_not(rmarkdown::pandoc_available(), "pandoc not available")
+
   # Test with minimal tibbles
   df_min1 <- tibble(a = 1)
   df_min2 <- tibble(a = 2)

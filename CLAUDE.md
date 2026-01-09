@@ -1,0 +1,70 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+datadiff is an R package for comparing and visualizing differences between data frames. It provides row-by-row comparison, column metadata diffing, context-aware output, and HTML report generation via flexdashboard.
+
+## Common Commands
+
+```bash
+# Run all tests
+make test
+
+# Run tests for specific source files (maps to corresponding test files)
+make test R/compare.R
+make test R/equal.R R/diffdata.R
+
+# Lint the package
+make lint
+
+# Run R CMD check
+make check
+
+# Generate documentation (roxygen2)
+make document
+```
+
+## Architecture
+
+### Core Modules
+
+- **R/compare.R** - Main comparison logic:
+  - `compare_data()` - Entry point for data frame comparison, returns diff with context rows
+  - `compare_join()` - Full outer join by row number, identifies rows in x only, y only, or both
+  - `compare_diff()` - Identifies differences, applies context rows, pivots for output
+  - `compare_groups()` - Compares group membership between data frames
+  - `compare_columns()` - Detects column name/type differences between data frames
+
+- **R/equal.R** - `is_equal()` vectorized equality test handling NA, Inf, and numeric tolerance
+
+- **R/diff.R** - HTML rendering:
+  - `show_diff()` - Formats diff as HTML table with color coding (red=deletions, green=additions)
+  - `render_diff()` - Renders diff in flexdashboard, opens in RStudio viewer or browser
+
+- **R/diffdata.R** - `diffdata()` high-level API combining comparison and rendering
+
+- **R/utils.R** - Helper utilities (`col_class()` for type detection)
+
+### Data Flow
+
+1. `diffdata()` validates inputs and checks column compatibility via `compare_columns()`
+2. `compare_data()` joins frames by row number and identifies differences
+3. `compare_diff()` adds context rows and pivots x/y values for display
+4. `render_diff()` generates styled HTML via formattable/kableExtra and opens in viewer
+
+### Key Dependencies
+
+- dplyr, tidyr, purrr, stringr - Data manipulation
+- formattable, kableExtra - Table styling
+- flexdashboard, rmarkdown - HTML report generation
+- cli, glue - User messaging
+
+## Code Style
+
+- Follow tidyverse style guide: snake_case for functions/variables
+- Use `|>` pipe operator for data transformations
+- Use roxygen2 with @param, @return, @export tags
+- Input validation with `stopifnot()` for user-facing functions
+- Use `rlang::abort()` or `cli::cli_alert_*` for error messaging
