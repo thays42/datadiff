@@ -13,7 +13,6 @@ Suggests:
     devtools,
     lubridate,
     rstudioapi,
-    languageserver,
     lintr,
     flexdashboard
 Config/testthat/edition: 3
