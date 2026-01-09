@@ -26,11 +26,17 @@ test_that("compare_join works with equal dataframes", {
 
   result <- compare_join(df1, df2)
 
-  expect_named(result, c(
-    ".row", ".join_type",
-    "a.__datadiff_x__", "b.__datadiff_x__",
-    "a.__datadiff_y__", "b.__datadiff_y__"
-  ))
+  expect_named(
+    result,
+    c(
+      ".row",
+      ".join_type",
+      "a.__datadiff_x__",
+      "b.__datadiff_x__",
+      "a.__datadiff_y__",
+      "b.__datadiff_y__"
+    )
+  )
   expect_equal(result$.join_type, rep("both", 3))
   expect_equal(result$.row, 1:3)
 })
@@ -223,7 +229,12 @@ test_that("compare_data respects tolerance parameter", {
   expect_true(nrow(result_default) > 0)
 
   # With larger tolerance, difference should be ignored
-  result_tolerant <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.01)
+  result_tolerant <- compare_data(
+    df1,
+    df2,
+    context_rows = c(0L, 0L),
+    tolerance = 0.01
+  )
   expect_equal(nrow(result_tolerant), 0)
 })
 
@@ -232,11 +243,21 @@ test_that("compare_data with tolerance handles multiple numeric columns", {
   df2 <- tibble(a = c(1.0005, 2.0), b = c(10.0, 20.0005))
 
   # With tight tolerance, both columns should show differences
-  result_tight <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.0001)
+  result_tight <- compare_data(
+    df1,
+    df2,
+    context_rows = c(0L, 0L),
+    tolerance = 0.0001
+  )
   expect_true(nrow(result_tight) > 0)
 
   # With loose tolerance, no differences
-  result_loose <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.001)
+  result_loose <- compare_data(
+    df1,
+    df2,
+    context_rows = c(0L, 0L),
+    tolerance = 0.001
+  )
   expect_equal(nrow(result_loose), 0)
 })
 

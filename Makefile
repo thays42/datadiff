@@ -52,3 +52,7 @@ snapshot:
 restore:
 	@echo "Restoring renv packages..."
 	@R -s -e "renv::restore()"
+
+format:
+	@echo "Formatting package..."
+	@air format .

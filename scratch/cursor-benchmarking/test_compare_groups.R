@@ -36,8 +36,10 @@ are_identical <- all.equal(result_full_join, result_anti_join)
 cat("\nResults are identical:", are_identical, "\n")
 
 if (isTRUE(are_identical)) {
-  cat("✓ Both functions produce the same results. Proceeding with benchmark...\n")
+  cat(
+    "✓ Both functions produce the same results. Proceeding with benchmark...\n"
+  )
 } else {
   cat("✗ Functions produce different results. Check implementation.\n")
   stop("Test failed")
-} 
+}

@@ -30,6 +30,9 @@ make snapshot
 
 # Restore renv packages from lockfile
 make restore
+
+# Format package code
+make format
 ```
 
 ## Architecture

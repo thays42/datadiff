@@ -55,9 +55,14 @@ compare_join <- function(x, y) {
     keep = TRUE
   ) |>
     mutate(
-      .row = coalesce(.data[[".rn.__datadiff_x__"]], .data[[".rn.__datadiff_y__"]]),
+      .row = coalesce(
+        .data[[".rn.__datadiff_x__"]],
+        .data[[".rn.__datadiff_y__"]]
+      ),
       .join_type = case_when(
-        !is.na(.data[[".rn.__datadiff_x__"]]) & !is.na(.data[[".rn.__datadiff_y__"]]) ~ "both",
+        !is.na(.data[[".rn.__datadiff_x__"]]) &
+          !is.na(.data[[".rn.__datadiff_y__"]]) ~
+          "both",
         !is.na(.data[[".rn.__datadiff_x__"]]) ~ "x",
         !is.na(.data[[".rn.__datadiff_y__"]]) ~ "y"
       ),
