@@ -26,7 +26,11 @@ test_that("compare_join works with equal dataframes", {
 
   result <- compare_join(df1, df2)
 
-  expect_named(result, c(".row", ".join_type", "a.x", "b.x", "a.y", "b.y"))
+  expect_named(result, c(
+    ".row", ".join_type",
+    "a.__datadiff_x__", "b.__datadiff_x__",
+    "a.__datadiff_y__", "b.__datadiff_y__"
+  ))
   expect_equal(result$.join_type, rep("both", 3))
   expect_equal(result$.row, 1:3)
 })
@@ -234,4 +238,33 @@ test_that("compare_data with tolerance handles multiple numeric columns", {
   # With loose tolerance, no differences
   result_loose <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.001)
   expect_equal(nrow(result_loose), 0)
+})
+
+test_that("compare_data handles columns ending in .x or .y", {
+  # Columns named value.x and value.y should work correctly
+  df1 <- tibble(value.x = 1:3, col = letters[1:3])
+  df2 <- tibble(value.x = c(1L, 99L, 3L), col = letters[1:3])
+
+  result <- compare_data(df1, df2, context_rows = c(0L, 0L))
+
+  # Should detect the difference in value.x at row 2
+  expect_true(nrow(result) > 0)
+  expect_true("value.x" %in% names(result))
+
+  # The difference should be at row 2
+  diff_rows <- result[result$.diff_type == "diff", ]
+  expect_true(all(diff_rows$.row == 2))
+})
+
+test_that("compare_join handles columns ending in .x or .y", {
+  df1 <- tibble(value.x = 1:3, value.y = 4:6)
+  df2 <- tibble(value.x = 1:3, value.y = 4:6)
+
+  result <- compare_join(df1, df2)
+
+  # Should have internal suffixes, not collision with user column names
+  expect_true("value.x.__datadiff_x__" %in% names(result))
+  expect_true("value.y.__datadiff_x__" %in% names(result))
+  expect_true("value.x.__datadiff_y__" %in% names(result))
+  expect_true("value.y.__datadiff_y__" %in% names(result))
 })

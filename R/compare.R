@@ -35,18 +35,19 @@ compare_join <- function(x, y) {
     x = mutate(x, .rn = row_number()),
     y = mutate(y, .rn = row_number()),
     by = join_by(.rn),
+    suffix = c(".__datadiff_x__", ".__datadiff_y__"),
     keep = TRUE
   ) |>
     mutate(
-      .row = coalesce(.data$.rn.x, .data$.rn.y),
+      .row = coalesce(.data[[".rn.__datadiff_x__"]], .data[[".rn.__datadiff_y__"]]),
       .join_type = case_when(
-        !is.na(.data$.rn.x) & !is.na(.data$.rn.y) ~ "both",
-        !is.na(.data$.rn.x) ~ "x",
-        !is.na(.data$.rn.y) ~ "y"
+        !is.na(.data[[".rn.__datadiff_x__"]]) & !is.na(.data[[".rn.__datadiff_y__"]]) ~ "both",
+        !is.na(.data[[".rn.__datadiff_x__"]]) ~ "x",
+        !is.na(.data[[".rn.__datadiff_y__"]]) ~ "y"
       ),
       .before = everything()
     ) |>
-    select(-.rn.x, -.rn.y)
+    select(-all_of(c(".rn.__datadiff_x__", ".rn.__datadiff_y__")))
 }
 
 compare_diff <- function(
@@ -58,8 +59,8 @@ compare_diff <- function(
 ) {
   # identify columns to compare
   compare_cols <- names(data) |>
-    str_subset(str_c("^.+(\\.x|\\.y)$")) |>
-    str_remove(str_c("(\\.x|\\.y)$")) |>
+    str_subset("\\.__datadiff_(x|y)__$") |>
+    str_remove("\\.__datadiff_(x|y)__$") |>
     unique()
 
   # identify rows with differences
@@ -67,8 +68,8 @@ compare_diff <- function(
   colnames(mask) <- compare_cols
   for (column in compare_cols) {
     mask[, column] <- !is_equal(
-      data[[paste0(column, ".x")]],
-      data[[paste0(column, ".y")]],
+      data[[paste0(column, ".__datadiff_x__")]],
+      data[[paste0(column, ".__datadiff_y__")]],
       tol = tolerance
     )
   }
@@ -111,16 +112,16 @@ compare_diff <- function(
   # drop `y` data frame columns and de-suffix `x` data frame columns
   context_data <- data[context_mask, ] |>
     mutate(.diff_type = "context") |>
-    select(!all_of(str_c(compare_cols, ".y"))) |>
-    rename_all(\(x) str_remove(x, "\\.x$"))
+    select(!all_of(str_c(compare_cols, ".__datadiff_y__"))) |>
+    rename_with(\(x) str_remove(x, "\\.__datadiff_x__$"))
 
   # pull data rows
   data[row_mask, ] |>
     # pivot so that `x` rows stacked on `y` rows.
     pivot_longer(
-      ends_with(".x") | ends_with(".y"),
+      ends_with(".__datadiff_x__") | ends_with(".__datadiff_y__"),
       names_to = c(".value", ".source"),
-      names_pattern = str_c("^(.+)\\.(x|y)$")
+      names_pattern = "^(.+)\\.__datadiff_(x|y)__$"
     ) |>
 
     # remove empty rows representing rows in x not in y or vice versa

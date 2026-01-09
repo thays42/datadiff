@@ -65,9 +65,13 @@ show_diff <- function(diffs) {
     kableExtra::row_spec(theirs, background = "#a7d1a9") |>
     kableExtra::row_spec(context, color = "#959595")
 
-  walk2(row_groups$start_row, row_groups$end_row, function(a, b) {
-    tbl <<- kableExtra::pack_rows(tbl, start_row = a, end_row = b)
-  })
+  for (i in seq_len(nrow(row_groups))) {
+    tbl <- kableExtra::pack_rows(
+      tbl,
+      start_row = row_groups$start_row[i],
+      end_row = row_groups$end_row[i]
+    )
+  }
 
   tbl
 }
