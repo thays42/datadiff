@@ -9,7 +9,8 @@ diffdata(
   y,
   max_differences = 10,
   context_rows = c(3L, 3L),
-  context_cols = everything()
+  context_cols = everything(),
+  tolerance = .Machine$double.eps^0.5
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ diffdata(
 row to include before and after a difference row.}
 
 \item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
+
+\item{tolerance}{Numeric tolerance for comparing numeric values.}
 }
 \value{
 Data frame of observations that are different in \code{x} and \code{y}, or

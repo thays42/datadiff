@@ -9,6 +9,7 @@
 #'   row to include before and after a difference row.
 #' @param context_cols <[`tidy-select`][dplyr_tidy_select]> Columns to include as context.
 #' @param max_differences Maximum number of differences to return.
+#' @param tolerance Numeric tolerance for comparing numeric values.
 #' @return Data frame of observations that are different in `x` and `y`, or
 #'   observations that are in only `x` or `y`, along with context rows.
 #' @export
@@ -17,13 +18,15 @@ compare_data <- function(
   y,
   context_rows = c(3L, 3L),
   context_cols = everything(),
-  max_differences = Inf
+  max_differences = Inf,
+  tolerance = .Machine$double.eps^0.5
 ) {
   compare_join(x, y) |>
     compare_diff(
       context_rows = context_rows,
       context_cols = context_cols,
-      max_differences = max_differences
+      max_differences = max_differences,
+      tolerance = tolerance
     )
 }
 
@@ -50,7 +53,8 @@ compare_diff <- function(
   data,
   context_rows = c(3L, 3L),
   context_cols = everything(),
-  max_differences = Inf
+  max_differences = Inf,
+  tolerance = .Machine$double.eps^0.5
 ) {
   # identify columns to compare
   compare_cols <- names(data) |>
@@ -64,7 +68,8 @@ compare_diff <- function(
   for (column in compare_cols) {
     mask[, column] <- !is_equal(
       data[[paste0(column, ".x")]],
-      data[[paste0(column, ".y")]]
+      data[[paste0(column, ".y")]],
+      tol = tolerance
     )
   }
 

@@ -209,3 +209,29 @@ test_that("compare_groups works with tidy-select syntax (all unique)", {
   )
   expect_equal(result, expected)
 })
+
+test_that("compare_data respects tolerance parameter", {
+  df1 <- tibble(a = c(1.0, 2.0, 3.0), b = c("x", "y", "z"))
+  df2 <- tibble(a = c(1.001, 2.0, 3.0), b = c("x", "y", "z"))
+
+  # With default tolerance, small difference should be detected
+  result_default <- compare_data(df1, df2, context_rows = c(0L, 0L))
+  expect_true(nrow(result_default) > 0)
+
+  # With larger tolerance, difference should be ignored
+  result_tolerant <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.01)
+  expect_equal(nrow(result_tolerant), 0)
+})
+
+test_that("compare_data with tolerance handles multiple numeric columns", {
+  df1 <- tibble(a = c(1.0, 2.0), b = c(10.0, 20.0))
+  df2 <- tibble(a = c(1.0005, 2.0), b = c(10.0, 20.0005))
+
+  # With tight tolerance, both columns should show differences
+  result_tight <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.0001)
+  expect_true(nrow(result_tight) > 0)
+
+  # With loose tolerance, no differences
+  result_loose <- compare_data(df1, df2, context_rows = c(0L, 0L), tolerance = 0.001)
+  expect_equal(nrow(result_loose), 0)
+})

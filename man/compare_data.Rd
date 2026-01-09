@@ -9,7 +9,8 @@ compare_data(
   y,
   context_rows = c(3L, 3L),
   context_cols = everything(),
-  max_differences = Inf
+  max_differences = Inf,
+  tolerance = .Machine$double.eps^0.5
 )
 }
 \arguments{
@@ -21,6 +22,8 @@ row to include before and after a difference row.}
 \item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
 
 \item{max_differences}{Maximum number of differences to return.}
+
+\item{tolerance}{Numeric tolerance for comparing numeric values.}
 }
 \value{
 Data frame of \code{x}, \code{y} full joined by row number. Shared variables
