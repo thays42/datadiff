@@ -1,9 +1,10 @@
 ---
 title: "Difference Report"
-output: 
+output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    highlight: null
 params:
   data: ""
 ---

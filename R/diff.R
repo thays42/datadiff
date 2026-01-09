@@ -79,13 +79,17 @@ show_diff <- function(diffs) {
 #' Render a diff in a flexdashboard
 #'
 #' Opens the diff as an HTML report in the RStudio viewer (if available) or
-#' browser.
+#' browser. Optionally saves to a file.
 #'
 #' @param diff Data frame as returned by [compare_data()], containing `.row`,
 #'   `.join_type`, `.diff_type`, `.source`, and data columns.
-#' @return Called for side effects (opens viewer). Returns `NULL` invisibly.
+#' @param output_file Optional file path to save the HTML report. If provided,
+#'   the report is saved to this location instead of (or in addition to) opening
+#'   in the viewer.
+#' @return Invisibly returns the path to the HTML file (either `output_file` if
+#'   provided, or a temporary file path).
 #' @export
-render_diff <- function(diff) {
+render_diff <- function(diff, output_file = NULL) {
   if (!requireNamespace("flexdashboard", quietly = TRUE)) {
     stop(
       "flexdashboard is not installed. Please install it with `install.packages('flexdashboard')`."
@@ -106,8 +110,13 @@ render_diff <- function(diff) {
       quiet = TRUE
     )
 
+  if (!is.null(output_file)) {
+    file.copy(out, output_file, overwrite = TRUE)
+    return(invisible(output_file))
+  }
+
   if (!interactive()) {
-    return()
+    return(invisible(out))
   }
 
   if (
@@ -117,4 +126,6 @@ render_diff <- function(diff) {
   } else {
     utils::browseURL(out)
   }
+
+  invisible(out)
 }

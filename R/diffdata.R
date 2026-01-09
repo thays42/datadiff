@@ -9,6 +9,8 @@
 #'   rows to include before and after a difference row.
 #' @param context_cols <[`tidy-select`][dplyr_tidy_select]> Columns to include as context.
 #' @param tolerance Numeric tolerance for comparing numeric values.
+#' @param output_file Optional file path to save the HTML report. If provided,
+#'   the report is saved to this location instead of opening in the viewer.
 #' @return If `x` and `y` have column differences (different names or types),
 #'   returns a visible data frame describing those differences (from [compare_columns()]).
 #'   Otherwise, invisibly returns the diff data frame (from [compare_data()]).
@@ -19,7 +21,8 @@ diffdata <- function(
   max_differences = 10,
   context_rows = c(3L, 3L),
   context_cols = everything(),
-  tolerance = .Machine$double.eps^0.5
+  tolerance = .Machine$double.eps^0.5,
+  output_file = NULL
 ) {
   stopifnot(
     "x must be a data frame" = is.data.frame(x),
@@ -51,8 +54,9 @@ diffdata <- function(
     context_cols = context_cols,
     max_differences = max_differences,
     tolerance = tolerance
-  ) |>
-    render_diff()
+  )
+
+  render_diff(data_diff, output_file = output_file)
 
   invisible(data_diff)
 }

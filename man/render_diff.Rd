@@ -4,16 +4,21 @@
 \alias{render_diff}
 \title{Render a diff in a flexdashboard}
 \usage{
-render_diff(diff)
+render_diff(diff, output_file = NULL)
 }
 \arguments{
 \item{diff}{Data frame as returned by \code{\link[=compare_data]{compare_data()}}, containing \code{.row},
 \code{.join_type}, \code{.diff_type}, \code{.source}, and data columns.}
+
+\item{output_file}{Optional file path to save the HTML report. If provided,
+the report is saved to this location instead of (or in addition to) opening
+in the viewer.}
 }
 \value{
-Called for side effects (opens viewer). Returns \code{NULL} invisibly.
+Invisibly returns the path to the HTML file (either \code{output_file} if
+provided, or a temporary file path).
 }
 \description{
 Opens the diff as an HTML report in the RStudio viewer (if available) or
-browser.
+browser. Optionally saves to a file.
 }

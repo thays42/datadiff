@@ -10,7 +10,8 @@ diffdata(
   max_differences = 10,
   context_rows = c(3L, 3L),
   context_cols = everything(),
-  tolerance = .Machine$double.eps^0.5
+  tolerance = .Machine$double.eps^0.5,
+  output_file = NULL
 )
 }
 \arguments{
@@ -24,6 +25,9 @@ rows to include before and after a difference row.}
 \item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
 
 \item{tolerance}{Numeric tolerance for comparing numeric values.}
+
+\item{output_file}{Optional file path to save the HTML report. If provided,
+the report is saved to this location instead of opening in the viewer.}
 }
 \value{
 If \code{x} and \code{y} have column differences (different names or types),
