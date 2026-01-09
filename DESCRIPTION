@@ -5,6 +5,7 @@ Authors@R:
     person("Tyler", "Hays", email = "tyhays@gmail.com", role = c("aut", "cre"))
 Description: Tools to compare and visualize differences between data frames, including row-by-row and column-wise comparison, context-aware diffing, and HTML report generation for data analysis workflows.
 License: MIT + file LICENSE
+Depends: R (>= 4.1)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
