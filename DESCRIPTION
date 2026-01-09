@@ -14,7 +14,14 @@ Suggests:
     lubridate,
     rstudioapi,
     lintr,
-    flexdashboard
+    flexdashboard,
+    knitr,
+    arsenal,
+    dataCompareR,
+    compareDF,
+    diffdf,
+    waldo
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Imports:
     dplyr,

@@ -24,6 +24,12 @@ make check
 
 # Generate documentation (roxygen2)
 make document
+
+# Snapshot renv (captures all deps including Suggests)
+make snapshot
+
+# Restore renv packages from lockfile
+make restore
 ```
 
 ## Architecture
@@ -60,6 +66,14 @@ make document
 - formattable, kableExtra - Table styling
 - flexdashboard, rmarkdown - HTML report generation
 - cli, glue - User messaging
+
+## Development Workflow
+
+When encountering friction with commands (special flags needed, multi-step processes, non-obvious incantations):
+- Propose adding **Makefile targets** for repeatable operations
+- Propose updating **CLAUDE.md** with context that would help future sessions
+
+This keeps the project self-documenting and avoids hitting the same issues repeatedly.
 
 ## Code Style
 
