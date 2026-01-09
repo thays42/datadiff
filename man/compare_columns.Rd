@@ -10,8 +10,15 @@ compare_columns(x, y)
 \item{x, y}{Data frames to compare.}
 }
 \value{
-A data frame of column metadata differences between
-\code{x} and \code{y}.
+A data frame with the following columns:
+\itemize{
+\item \code{.diff} - The type of difference: \code{"in x only"}, \code{"in y only"},
+or \code{"type conflict"}
+\item \code{column} - The column name
+\item \code{x_type} - The column type in \code{x} (if applicable)
+\item \code{y_type} - The column type in \code{y} (if applicable)
+}
+Returns an empty data frame if there are no differences.
 }
 \description{
 Compare column metadata between two data frames

@@ -1,17 +1,21 @@
 #' Compare two data frames
 #'
-#' @param x,y Data frames to compare
-#' @return Data frame of `x`, `y` full joined by row number. Shared variables
-#'   have suffixes as specified by `suffix`. A `.row` helper variable indicates
-#'   the row number. A `.type` helper variable indicates whether the row is in
-#'   `x only`, `y only` or `both` data frames.
+#' @param x,y Data frames to compare.
 #' @param context_rows Integer vector of length two indicating the number of context
-#'   row to include before and after a difference row.
+#'   rows to include before and after a difference row.
 #' @param context_cols <[`tidy-select`][dplyr_tidy_select]> Columns to include as context.
 #' @param max_differences Maximum number of differences to return.
 #' @param tolerance Numeric tolerance for comparing numeric values.
-#' @return Data frame of observations that are different in `x` and `y`, or
-#'   observations that are in only `x` or `y`, along with context rows.
+#' @return A data frame containing differences between `x` and `y` with the
+#'   following columns:
+#'   \itemize{
+#'     \item `.row` - The row number from the original data frames
+#'     \item `.join_type` - Whether the row is in `"x"`, `"y"`, or `"both"`
+#'     \item `.diff_type` - Whether the row is a `"diff"` or `"context"` row
+#'     \item `.source` - For diff rows, whether this is the `"x"` or `"y"` version;
+#'       `NA` for context rows
+#'   }
+#'   Plus the original data columns (context columns and columns with differences).
 #' @export
 compare_data <- function(
   x,
@@ -167,8 +171,15 @@ compare_groups <- function(x, y, group_cols) {
 #' Compare column metadata between two data frames
 #'
 #' @param x,y Data frames to compare.
-#' @return A data frame of column metadata differences between
-#'   `x` and `y`.
+#' @return A data frame with the following columns:
+#'   \itemize{
+#'     \item `.diff` - The type of difference: `"in x only"`, `"in y only"`,
+#'       or `"type conflict"`
+#'     \item `column` - The column name
+#'     \item `x_type` - The column type in `x` (if applicable)
+#'     \item `y_type` - The column type in `y` (if applicable)
+#'   }
+#'   Returns an empty data frame if there are no differences.
 #' @export
 compare_columns <- function(x, y) {
   rc <- tibble()

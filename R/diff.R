@@ -78,7 +78,12 @@ show_diff <- function(diffs) {
 
 #' Render a diff in a flexdashboard
 #'
-#' @param diff Data frame as returned by compare_data.
+#' Opens the diff as an HTML report in the RStudio viewer (if available) or
+#' browser.
+#'
+#' @param diff Data frame as returned by [compare_data()], containing `.row`,
+#'   `.join_type`, `.diff_type`, `.source`, and data columns.
+#' @return Called for side effects (opens viewer). Returns `NULL` invisibly.
 #' @export
 render_diff <- function(diff) {
   if (!requireNamespace("flexdashboard", quietly = TRUE)) {

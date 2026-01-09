@@ -1,14 +1,17 @@
 #' Diff Data Frames
 #'
+#' High-level function that compares two data frames and renders the result as
+#' an HTML report in the RStudio viewer or browser.
+#'
 #' @param x,y Data frames to diff.
-#' @param max_differences Maximum differences to detect.
-#' @param context_rows Integer vector of length two indicating the number of context
-#'   row to include before and after a difference row.
-#' @param context_cols <[`tidy-select`][dplyr_tidy_select]> Columns to include as context.
 #' @param max_differences Maximum number of differences to return.
+#' @param context_rows Integer vector of length two indicating the number of context
+#'   rows to include before and after a difference row.
+#' @param context_cols <[`tidy-select`][dplyr_tidy_select]> Columns to include as context.
 #' @param tolerance Numeric tolerance for comparing numeric values.
-#' @return Data frame of observations that are different in `x` and `y`, or
-#'   observations that are in only `x` or `y`, along with context rows.
+#' @return If `x` and `y` have column differences (different names or types),
+#'   returns a visible data frame describing those differences (from [compare_columns()]).
+#'   Otherwise, invisibly returns the diff data frame (from [compare_data()]).
 #' @export
 diffdata <- function(
   x,

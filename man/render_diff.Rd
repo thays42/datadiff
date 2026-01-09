@@ -7,8 +7,13 @@
 render_diff(diff)
 }
 \arguments{
-\item{diff}{Data frame as returned by compare_data.}
+\item{diff}{Data frame as returned by \code{\link[=compare_data]{compare_data()}}, containing \code{.row},
+\code{.join_type}, \code{.diff_type}, \code{.source}, and data columns.}
+}
+\value{
+Called for side effects (opens viewer). Returns \code{NULL} invisibly.
 }
 \description{
-Render a diff in a flexdashboard
+Opens the diff as an HTML report in the RStudio viewer (if available) or
+browser.
 }

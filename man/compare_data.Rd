@@ -14,10 +14,10 @@ compare_data(
 )
 }
 \arguments{
-\item{x, y}{Data frames to compare}
+\item{x, y}{Data frames to compare.}
 
 \item{context_rows}{Integer vector of length two indicating the number of context
-row to include before and after a difference row.}
+rows to include before and after a difference row.}
 
 \item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
 
@@ -26,13 +26,16 @@ row to include before and after a difference row.}
 \item{tolerance}{Numeric tolerance for comparing numeric values.}
 }
 \value{
-Data frame of \code{x}, \code{y} full joined by row number. Shared variables
-have suffixes as specified by \code{suffix}. A \code{.row} helper variable indicates
-the row number. A \code{.type} helper variable indicates whether the row is in
-\verb{x only}, \verb{y only} or \code{both} data frames.
-
-Data frame of observations that are different in \code{x} and \code{y}, or
-observations that are in only \code{x} or \code{y}, along with context rows.
+A data frame containing differences between \code{x} and \code{y} with the
+following columns:
+\itemize{
+\item \code{.row} - The row number from the original data frames
+\item \code{.join_type} - Whether the row is in \code{"x"}, \code{"y"}, or \code{"both"}
+\item \code{.diff_type} - Whether the row is a \code{"diff"} or \code{"context"} row
+\item \code{.source} - For diff rows, whether this is the \code{"x"} or \code{"y"} version;
+\code{NA} for context rows
+}
+Plus the original data columns (context columns and columns with differences).
 }
 \description{
 Compare two data frames

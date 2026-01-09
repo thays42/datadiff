@@ -2,18 +2,21 @@
 % Please edit documentation in R/equal.R
 \name{is_equal}
 \alias{is_equal}
-\title{Equality Test}
+\title{Vectorized Equality Test}
 \usage{
 is_equal(x, y, tol = .Machine$double.eps^0.5)
 }
 \arguments{
 \item{x, y}{Vectors to compare.}
 
-\item{tol}{Numeric tolerance for comparison.}
+\item{tol}{Numeric tolerance for comparison. Only applies to numeric vectors.}
 }
 \value{
-TRUE if equal (within tolerance), FALSE otherwise.
+A logical vector the same length as \code{x} and \code{y}, where each element
+is \code{TRUE} if the corresponding elements are equal (within tolerance for
+numeric values) and \code{FALSE} otherwise.
 }
 \description{
-Equality Test
+Element-wise equality comparison that handles \code{NA} and \code{Inf} values correctly,
+and supports numeric tolerance for floating-point comparisons.
 }

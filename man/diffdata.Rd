@@ -19,16 +19,18 @@ diffdata(
 \item{max_differences}{Maximum number of differences to return.}
 
 \item{context_rows}{Integer vector of length two indicating the number of context
-row to include before and after a difference row.}
+rows to include before and after a difference row.}
 
 \item{context_cols}{<\code{\link[=dplyr_tidy_select]{tidy-select}}> Columns to include as context.}
 
 \item{tolerance}{Numeric tolerance for comparing numeric values.}
 }
 \value{
-Data frame of observations that are different in \code{x} and \code{y}, or
-observations that are in only \code{x} or \code{y}, along with context rows.
+If \code{x} and \code{y} have column differences (different names or types),
+returns a visible data frame describing those differences (from \code{\link[=compare_columns]{compare_columns()}}).
+Otherwise, invisibly returns the diff data frame (from \code{\link[=compare_data]{compare_data()}}).
 }
 \description{
-Diff Data Frames
+High-level function that compares two data frames and renders the result as
+an HTML report in the RStudio viewer or browser.
 }
